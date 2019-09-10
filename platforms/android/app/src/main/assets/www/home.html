@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.10.0/firebase.js"></script>
+  <!-- onsenui link  -->
+  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+  <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+
+  <!-- leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+  <!--Font-->
+  <link href="https://fonts.googleapis.com/css?family=Pridi:600&display=swap" rel="stylesheet">
+  <!--Bootstrap-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="css/home.css">
+
+  <title>FixingMan</title>
+
+  <script>
+     var firebaseConfig = {
+            apiKey: "AIzaSyB6QMhAaE3oktdyy8deswQNQIw4cwPq-W4",
+            authDomain: "fixit-app-e3546.firebaseapp.com",
+            databaseURL: "https://fixit-app-e3546.firebaseio.com",
+            projectId: "fixit-app-e3546",
+            storageBucket: "fixit-app-e3546.appspot.com",
+            messagingSenderId: "139817871220",
+            appId: "1:139817871220:web:b634b75fb562dcd2"
+        };
+        // Initialize Firebase
+
+
+        firebase.initializeApp(firebaseConfig);
+        var firestore = firebase.firestore();
+
+  </script>
+
+</head>
+
+<body>
+  <!--  Page  -->
+  <ons-page>
+    <!--   toolbar  -->
+    <ons-toolbar style="background-color:  #ffb700 ">
+      <div class="left">
+        <ons-toolbar-button>
+          <ons-icon onclick="chat()" icon="fa-bell" style="color: black"></ons-icon>
+        </ons-toolbar-button>
+      </div>
+
+      <div class="center">Fixing Man</div>
+
+      <div class="right">
+        <ons-toolbar-button>
+          <ons-icon icon="fa-sign-out-alt" style="color: black" onclick="logout()"></ons-icon>
+        </ons-toolbar-button>
+      </div>
+    </ons-toolbar>
+    <!--  //toolbar  -->
+
+    <!--   toolbar  -->
+    <ons-tabbar style="background-color: #ffb700" swipeable position="under">
+      <ons-tab style="background-color: #ffb700" page="tab1.html" label="Home" icon="fa-home, material:fa-home" active>
+      </ons-tab>
+      <ons-tab style="background-color: #ffb700" page="tab2.html" label="History" icon="fa-history"
+        active-icon="fa-history">
+      </ons-tab>
+      <ons-tab style="background-color: #ffb700" page="tab3.html" label="Setttings" icon="md-settings"
+        active-icon="md-settings">
+      </ons-tab>
+    </ons-tabbar>
+    <!-- //toolbar -->
+  </ons-page>
+  <!--  //page ========= -->
+
+  <!--  ======================================================tab1 >> Maps ===================================================== -->
+  
+  <template id="tab1.html">
+    <ons-page id="Tab1">
+      <ons-navigator swipeable id="myNavigator" page="test1.html"></ons-navigator>
+      <template id="test1.html">
+        <ons-page id="test1">
+      <!-- map ตำแหน่งร้านของคุณ -->
+      <ons-card id="map" style="width: 95%; height : 50%">
+
+
+        <script>
+          var map = L.map('map').setView([7.893946673324378, 98.34969520568848], 13);
+
+          L.tileLayer('https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=prAnw6NTF7eaj3wF5QFK', {
+            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+
+          }).addTo(map);
+
+          L.marker([7.893946673324378, 98.34969520568848]).addTo(map)
+            .bindPopup('ตำแหน่งร้านของคุณ')
+            .openPopup();
+
+        </script>
+      </ons-card>
+
+
+      <!-- ข้อมูลของร้าน -->
+      <ons-card>
+        <ons-card style="background-color: #cce3f0;" onclick="createAlertDialog()">
+          <div class="row">
+            <div class="col col-3">
+              <img src="img/user.png" alt="Onsen UI" style="width: 120%">
+            </div>
+            <div class="col col-9">
+
+              <div class="title">
+                <p style="font-size: 16px">รหัสร้าน : 777-222</p>
+                <p style="font-size: 16px">PPMotor</p>
+                <p style="font-size: 12px; font-style: normal">3/4 Sakdidet Rd, Talat Nuea, Mueang Phuket District,
+                  Phuket 83000<p>
+              </div>
+            </div>
+          </div>
+        </ons-card>
+        <ons-list-item>
+          <div class="center" style="font-size: 12px;">สถานะร้าน &nbsp;</div>
+          <div class="right">
+            <ons-switch checked></ons-switch>
+          </div>
+        </ons-list-item>
+        </div>
+
+      </ons-card>
+    </ons-page>
+  </template>
+  <template id="chat.html">
+    <ons-page id="test2">
+
+      <ons-toolbar>
+        <div class="left">
+          <ons-back-button>Back</ons-back-button>
+        </div>
+        <div class="center"></div>
+      </ons-toolbar>
+      <div class="col-sm-3 col-sm-offset-4 frame">
+        <ul></ul>
+        <div>
+          <div class="msj-rta macro">
+            <div class="text text-r" style="background:whitesmoke !important">
+              <input class="mytext" placeholder="Type a message" />
+            </div>
+
+          </div>
+          <div style="padding:10px;">
+            <span class="glyphicon glyphicon-share-alt"></span>
+          </div>
+        </div>
+      </div>
+
+      <style>
+        .mytext {
+          border: 0;
+          padding: 10px 10px 10px 10px;
+          font-size: 20px;
+          background: whitesmoke;
+        }
+
+        .text {
+          width: 75%;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .text>p:first-of-type {
+          width: 100%;
+          margin-top: 5px;
+          margin-bottom: auto;
+          line-height: 20px;
+          font-size: 20px;
+        }
+
+        .text>p:last-of-type {
+          width: 100%;
+          text-align: right;
+          color: silver;
+          margin-bottom: -7px;
+          margin-top: auto;
+        }
+
+        .text-l {
+          float: left;
+          padding-right: 10px;
+        }
+
+        .text-r {
+          float: right;
+          padding-left: 10px;
+        }
+
+        .avatar {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 25%;
+          float: left;
+          padding-right: 10px;
+        }
+
+        .macro {
+          margin-top: 10px;
+          width: 85%;
+          border-radius: 5px;
+          padding: 5px;
+
+          display: flex;
+        }
+
+        .msj-rta {
+          float: right;
+          background: whitesmoke;
+        }
+
+        .msj {
+          float: left;
+          background: white;
+        }
+
+        .frame {
+          background: #e0e0de;
+          height: 100%;
+          overflow: hidden;
+          padding: 0;
+        }
+
+        .frame>div:last-of-type {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          height: 70px;
+          display: flex;
+        }
+
+        body>div>div>div:nth-child(2)>span {
+          background: whitesmoke;
+          padding: 10px;
+          font-size: 21px;
+          border-radius: 50%;
+        }
+
+        body>div>div>div.msj-rta.macro {
+          margin: auto;
+          margin-left: 1%;
+        }
+
+        ul {
+          width: 100%;
+          list-style-type: none;
+          padding: 18px;
+          position: absolute;
+          bottom: 47px;
+          display: flex;
+          flex-direction: column;
+          top: 0;
+          overflow-y: scroll;
+        }
+
+        .msj:before {
+          width: 0;
+          height: 0;
+          content: "";
+          top: -5px;
+          left: -14px;
+          position: relative;
+          border-style: solid;
+          border-width: 0 13px 13px 0;
+          border-color: transparent #ffffff transparent transparent;
+        }
+
+        .msj-rta:after {
+          width: 0;
+          height: 0;
+          content: "";
+          top: -5px;
+          left: 14px;
+          position: relative;
+          border-style: solid;
+          border-width: 13px 13px 0 0;
+          border-color: whitesmoke transparent transparent transparent;
+        }
+
+        input:focus {
+          outline: none;
+        }
+
+        ::-webkit-input-placeholder {
+          /* Chrome/Opera/Safari */
+          color: #d4d4d4;
+        }
+
+        ::-moz-placeholder {
+          /* Firefox 19+ */
+          color: #d4d4d4;
+        }
+
+        :-ms-input-placeholder {
+          /* IE 10+ */
+          color: #d4d4d4;
+        }
+
+        :-moz-placeholder {
+          /* Firefox 18- */
+          color: #d4d4d4;
+        }
+      </style>
+      <script>
+
+        var me = {};
+        me.avatar = "img/boy.png";
+        var you = {};
+        you.avatar = "img/man.png";
+sssssssssssss                                                 
+        function formatAMPM(date) {
+          var hours = date.getHours();
+          var minutes = date.getMinutes();
+          var ampm = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12;
+          hours = hours ? hours : 12; // the hour '0' should be '12'
+          minutes = minutes < 10 ? '0' + minutes : minutes;
+          var strTime = hours + ':' + minutes + ' ' + ampm;
+          return strTime;
+        }
+
+        //-- No use time. It is a javaScript effect.
+        function insertChat(who, text, time) {
+          if (time === undefined) {
+            time = 0;
+          }
+          var control = "";
+          var date = formatAMPM(new Date());
+
+          if (who == "me") {
+
+            control = '<li style="width:100%;">' +
+              '<div class="msj-rta macro">' +
+              '<div class="text text-r">' +
+              '<p>' + text + '</p>' +
+              '<p style="font-size:15px"><small id="date">' + date + '</small></p>' +
+              '</div>' +
+              '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="' + you.avatar + '" /></div>' +
+              '</li>';
+          } else {
+            control = '<li style="width:100%">' +
+              '<div class="msj macro">' +
+              '<div class="avatar"><img class="img-circle" style="width:100%;" src="' + me.avatar + '" /></div>' +
+              '<div class="text text-l">' +
+              '<p>' + text + '</p>' +
+              '<p style="font-size:15px"><small >' + date + '</small></p>' +
+              '</div>' +
+              '</div>' +
+              '</li>';
+          }
+          setTimeout(
+            function () {
+              $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
+            }, time);
+
+        }
+
+        function resetChat() {
+          $("ul").empty();
+        }
+
+        $(".mytext").on("keydown", function (e) {
+          if (e.which == 13) {
+            var text = $(this).val();
+            if (text !== "") {
+              firestore.collection("Chat").doc().get().then(function (querySnapshot) {
+                
+                firestore.collection('Chat').doc("two").set({
+                
+                 msg2 : text
+
+                }).then(function () {
+                  console.log("Status saved!");
+                }).catch(function (error) {
+                  console.log("Got an Error: ", error);
+
+                });
+              });
+              insertChat("me", text);
+              $(this).val('');
+            }
+          }
+        });
+
+        $('body > div > div > div:nth-child(2) > span').click(function () {
+          $(".mytext").trigger({ type: 'keydown', which: 13, keyCode: 13 });
+        })
+
+        //-- Clear Chat
+        resetChat();
+
+        // //-- Print Messages
+        $(".mytext", function (e) {
+        firestore.collection("Chat").doc("one").get().then(function (doc) {
+
+                  insertChat("you", doc.data().msg1, 3000);
+
+
+        });
+        
+
+
+});
+        // insertChat("me", "Hello Tom...",0);
+        // insertChat("you", "Hi, Pablo", 1500);
+        // insertChat("me", "What would you like to talk about today?", 3500);
+        // insertChat("you", "Tell me a joke", 7000);
+        // insertChat("me", "Spaceman: Computer! Computer! Do we bring battery?!", 9500);
+        // insertChat("you", "LOL", 12000);
+
+
+//-- NOTE: No use time on insertChat.</script>
+    </ons-page>
+  </template>
+
+    </ons-page>
+
+  </template>
+
+  <template id="alert-dialog.html">
+    <ons-alert-dialog id="my-alert-dialog" modifier="rowfooter">
+      <div class="alert-dialog-title">มีรายการ เรียกซ่อม !!! </div>
+      <div class="alert-dialog-content">
+        กด "รับซ่อม" เมื่อมีการตกลงเรียกซ่อม
+      </div>
+      <div class="alert-dialog-footer">
+        <ons-alert-dialog-button onclick="hideAlertDialog()">ยกเลิก</ons-alert-dialog-button>
+        <ons-alert-dialog-button onclick="myNavFunc()">รับซ่อม</ons-alert-dialog-button>
+      </div>
+    </ons-alert-dialog>
+  </template>
+
+  <script>
+    var createAlertDialog = function () {
+      var dialog = document.getElementById('my-alert-dialog');
+
+      if (dialog) {
+        dialog.show();
+      } else {
+        ons.createElement('alert-dialog.html', { append: true })
+          .then(function (dialog) {
+            dialog.show();
+          });
+      }
+    };
+
+    var hideAlertDialog = function () {
+
+      document
+        .getElementById('my-alert-dialog')
+        .hide();
+
+    };
+    function myNavFunc() {
+      document
+        .getElementById('my-alert-dialog')
+        .hide();
+
+      var long = 98.3370182;
+      var lat = 7.8947922;
+      // If it's an iPhone..
+      if ((navigator.platform.indexOf("iPhone") != -1)
+        || (navigator.platform.indexOf("iPod") != -1)
+        || (navigator.platform.indexOf("iPad") != -1)
+        || (navigator.platform.indexOf("Android") != -1))
+        window.open('maps://maps.google.com/maps?daddr=' + lat + ',' + long + '&amp;ll=');
+      else
+        window.open('http://maps.google.com/maps?daddr=' + lat + ',' + long + '&amp;ll=');
+    }
+
+  </script>
+  <!--  ======================================================tab1===================================================== -->
+  
+  <!--  ======================================================tab2===================================================== -->
+  <template id="tab2.html">
+    <ons-page id="Tab2">
+
+      <ons-toolbar>
+
+        <div class="center">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <ons-segment id="segment" tabbar-id="tabbar" style="width: 250px;">
+            <button style="font-family: 'Pridi', serif;">กำลังทำการซ่อม</button>
+            <button style="font-family: 'Pridi', serif;">ซ่อมเสร็จเรียบร้อย</button>
+          </ons-segment>
+        </div>
+
+
+      </ons-toolbar>
+      <ons-tabbar id="tabbar">
+        <ons-tab page="page1.html" active></ons-tab>
+        <ons-tab page="page2.html"></ons-tab>
+      </ons-tabbar>
+
+      <template id="page1.html">
+        <ons-page>
+          <ons-list-header>09/08/2019</ons-list-header>
+          <ons-card class="notificate">
+            <span>กำลังทำการซ่อมของ นายเทน อเดช</span>
+            <span class="notitext">คุณกำลังทำรายการซ่อมของ นายเทน อเดช หากทำรายการซ่อมเสร็จเรียบร้อยโปรดยืนยัน </span>
+            <button type="button" class="btn btn-outline-success" onclick="showAlert()"><i
+                class="fa fa-check"></i></button>
+            <script>
+              var showAlert = function () {
+                ons.notification.alert('ยืนยันรายการซ่อมเสร็จเรียบร้อย');
+              };
+            </script>
+          </ons-card>
+
+
+        </ons-page>
+
+      </template>
+
+      <template id="page2.html">
+        <ons-page>
+          <ons-list-header>20/06/2019</ons-list-header>
+          <ons-card class="notificate">
+            <span>ทำการซ่อมเสร็จเรียบร้อย</span>
+            <span class="notitext">คุณได้ทำรายการซ่อมของ นายสมยุทธ์ ลาพักงาน เสร็จเรียบร้อยแล้ว เมื่อ 18.06 น.</span>
+          </ons-card>
+        </ons-page>
+      </template>
+    </ons-page>
+
+  </template>
+  <!--  ======================================================tab2===================================================== -->
+
+  <!--  ======================================================tab3===================================================== -->
+  <template id="tab3.html">
+    <ons-page id="Tab3">
+      <ons-card>
+        <center> <img src="img/user.png" alt="Onsen UI" style="width: 35%">
+          <div class="title" style="font-size: 25px">
+            นายขยัน &nbsp; มาทำงาน
+          </div>
+        </center>
+      </ons-card>
+      <!-- //crad profile -->
+
+      <!-- card setting -->
+      <ons-card>
+        <div class="content">
+          <ons-list>
+            <ons-list-header>Setttings</ons-list-header>
+            <ons-list-item>Help & Support</ons-list-item>
+            <ons-list-item>Contact Us</ons-list-item>
+            <ons-list-item>Terms & Conditions</ons-list-item>
+          </ons-list>
+        </div>
+      </ons-card>
+    </ons-page>
+  </template>
+  <!--  ======================================================tab3===================================================== -->
+
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyB6QMhAaE3oktdyy8deswQNQIw4cwPq-W4",
+      authDomain: "fixit-app-e3546.firebaseapp.com",
+      databaseURL: "https://fixit-app-e3546.firebaseio.com",
+      projectId: "fixit-app-e3546",
+      storageBucket: "fixit-app-e3546.appspot.com",
+      messagingSenderId: "139817871220",
+      appId: "1:139817871220:web:b634b75fb562dcd2"
+    };
+    // Initialize Firebase
+
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  <script>
+
+
+    document.addEventListener('prechange', function (event) {
+
+      if (event.index == 0) {
+        console.log('home clicked');
+        // get data for map screen  
+
+      } else if (event.index == 1) {
+        console.log('history clicked');
+        // get data for coins screen  
+
+      }
+      else if (event.index == 2) {
+        console.log('setting clicked');
+        // get data for history screen  
+      }
+
+
+    });
+
+    function settings() {
+
+
+    }
+  </script>
+
+  <script>
+    // app logout 
+    function logout() {
+      firebase.auth().signOut().then(function () {
+        // Sign-out successful.
+        ons.notification.alert('See u again soon');
+        window.location.href = 'sign-in.html';
+      }).catch(function (error) {
+        // An error happened.
+      });
+    }
+
+    function chat() {
+      document.querySelector('#myNavigator').pushPage('chat.html');
+
+    }
+  </script>
+
+  <!-- <script type="text/javascript" src="cordova.js"></script> -->
+  <!-- <script type="text/javascript" src="js/home.js"></script> -->
+  <!-- <script type="text/javascript" src="js/map.js"></script> -->
+
+  <style>
+    * {
+      font-family: 'Pridi', serif;
+    }
+
+    .title {
+      font-family: 'Pridi', serif;
+    }
+
+    .center {
+      font-family: 'Pridi', serif;
+
+    }
+
+    .right {
+      font-family: 'Pridi', serif;
+    }
+
+    .notificate {
+      font-size: 16px;
+    }
+
+    .notitext {
+      color: gray;
+    }
+  </style>
+</body>
+
+</html>
