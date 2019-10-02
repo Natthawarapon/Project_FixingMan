@@ -79,15 +79,6 @@
 
 						</a>
 					</div>
-					<div class="flex-c-m">
-						<a href="#" class="login100-social-item bg1">
-							<i class="fa fa-facebook"></i>
-						</a>
-
-						<a href="#" class="login100-social-item bg3">
-							<i class="fa fa-google"></i>
-						</a>
-					</div>
 					<div class="text-center div-to1 w-full">
 						<a class="t01" href="sign-up.html" style="color:white">
 							Sign Up
@@ -117,25 +108,26 @@
 	  
 	  //login username
 	  var login = function () {
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('pass').value;
-            firebase.auth().signInWithEmailAndPassword(username, password).catch(function (error) {
-                // Handle Errors here.
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                console.log(error.code + ':' + error.message);
-                ons.notification.alert('Login faild');
-                // ...
-            });
-			    
-        firebase.auth().onAuthStateChanged(function (user) {
-            if (user) {
-                // User is signed in.
-                //Send user to home.html
-                window.location.href = 'home.html';
-            }
-        })
-        };
+			var username = document.getElementById('username').value;
+			var password = document.getElementById('pass').value;
+
+			firebase.auth().signInWithEmailAndPassword(username, password).catch(function (error) {
+				// Handle Errors here.
+				var errorCode = error.code;
+				var errorMessage = error.message;
+				console.log(error.code + ':' + error.message);
+				ons.notification.alert('Login faild');
+				// ...
+			});
+
+			firebase.auth().onAuthStateChanged(function (user) {
+				if (user) {
+					var setemail = localStorage.setItem('email', user.email);
+					//Send user to home.html
+					window.location.href = 'home.html';
+				}
+			})
+		};
 	  </script>
 
 

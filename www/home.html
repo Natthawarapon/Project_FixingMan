@@ -33,20 +33,20 @@
   <title>FixingMan</title>
 
   <script>
-     var firebaseConfig = {
-            apiKey: "AIzaSyB6QMhAaE3oktdyy8deswQNQIw4cwPq-W4",
-            authDomain: "fixit-app-e3546.firebaseapp.com",
-            databaseURL: "https://fixit-app-e3546.firebaseio.com",
-            projectId: "fixit-app-e3546",
-            storageBucket: "fixit-app-e3546.appspot.com",
-            messagingSenderId: "139817871220",
-            appId: "1:139817871220:web:b634b75fb562dcd2"
-        };
-        // Initialize Firebase
+    var firebaseConfig = {
+      apiKey: "AIzaSyB6QMhAaE3oktdyy8deswQNQIw4cwPq-W4",
+      authDomain: "fixit-app-e3546.firebaseapp.com",
+      databaseURL: "https://fixit-app-e3546.firebaseio.com",
+      projectId: "fixit-app-e3546",
+      storageBucket: "fixit-app-e3546.appspot.com",
+      messagingSenderId: "139817871220",
+      appId: "1:139817871220:web:b634b75fb562dcd2"
+    };
+    // Initialize Firebase
 
 
-        firebase.initializeApp(firebaseConfig);
-        var firestore = firebase.firestore();
+    firebase.initializeApp(firebaseConfig);
+    var firestore = firebase.firestore();
 
   </script>
 
@@ -89,340 +89,372 @@
   <!--  //page ========= -->
 
   <!--  ======================================================tab1 >> Maps ===================================================== -->
-  
+
   <template id="tab1.html">
     <ons-page id="Tab1">
       <ons-navigator swipeable id="myNavigator" page="test1.html"></ons-navigator>
       <template id="test1.html">
         <ons-page id="test1">
-      <!-- map ตำแหน่งร้านของคุณ -->
-      <ons-card id="map" style="width: 95%; height : 50%">
+          <!-- map ตำแหน่งร้านของคุณ -->
+          <ons-card id="map" style="width: 95%; height : 50%">
 
 
-        <script>
-          var map = L.map('map').setView([7.893946673324378, 98.34969520568848], 13);
+            <script>
+              var map = L.map('map').setView([7.893946673324378, 98.34969520568848], 13);
 
-          L.tileLayer('https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=prAnw6NTF7eaj3wF5QFK', {
-            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+              L.tileLayer('https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=prAnw6NTF7eaj3wF5QFK', {
+                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
 
-          }).addTo(map);
+              }).addTo(map);
 
-          L.marker([7.893946673324378, 98.34969520568848]).addTo(map)
-            .bindPopup('ตำแหน่งร้านของคุณ')
-            .openPopup();
+              L.marker([7.893946673324378, 98.34969520568848]).addTo(map)
+                .bindPopup('ตำแหน่งร้านของคุณ')
+                .openPopup();
 
-        </script>
-      </ons-card>
+            </script>
+          </ons-card>
 
 
-      <!-- ข้อมูลของร้าน -->
-      <ons-card>
-        <ons-card style="background-color: #cce3f0;" onclick="createAlertDialog()">
-          <div class="row">
-            <div class="col col-3">
-              <img src="img/user.png" alt="Onsen UI" style="width: 120%">
+          <!-- ข้อมูลของร้าน -->
+          <ons-card>
+            <ons-card style="background-color: #cce3f0;" onclick="createAlertDialog()">
+              <div class="row">
+                <div class="col col-3">
+                  <img src="img/user.png" alt="Onsen UI" style="width: 120%">
+                </div>
+                <div class="col col-9">
+
+                  <div class="title">
+                    <div class="container">
+                      <div class="row">
+
+                        <p style="font-size: 16px">รหัสร้าน :</p>
+                        <p style="font-size: 16px" id="codestore"> </p>
+                      </div>
+
+                    </div>
+
+
+                    <p style="font-size: 16px" id="namestore"></p>
+                    <p style="font-size: 12px; font-style: normal" id="addressstore">
+                      <p>
+                  </div>
+                </div>
+              </div>
+            </ons-card>
+            <ons-list-item>
+              <div class="center" style="font-size: 12px;">สถานะร้าน &nbsp;</div>
+              <div class="right">
+                <ons-switch></ons-switch>
+                <script>
+                  function status() {
+                     document.querySelector('ons-switch').addEventListener('change', function (){
+                    var namestore_get = localStorage.getItem("namestore");
+                    if (event.value == true) {
+                      
+                      var firestoreRef = firestore.collection("Technicians").doc(namestore_get)
+                      var updateStatus = firestoreRef.update({
+                        status: "on"
+                      });
+                      console.log(' on ');
+
+                    } else {
+                       var firestoreRef = firestore.collection("Technicians").doc(namestore_get)
+                      var updateStatus = firestoreRef.update({
+                        status: "off"
+                      });
+                      console.log(' off ');
+                    }
+                  })
+                  }
+                 
+
+                  status();
+                </script>
+              </div>
+            </ons-list-item>
             </div>
-            <div class="col col-9">
 
-              <div class="title">
-                <p style="font-size: 16px">รหัสร้าน : 777-222</p>
-                <p style="font-size: 16px">PPMotor</p>
-                <p style="font-size: 12px; font-style: normal">3/4 Sakdidet Rd, Talat Nuea, Mueang Phuket District,
-                  Phuket 83000<p>
+          </ons-card>
+        </ons-page>
+      </template>
+      <template id="chat.html">
+        <ons-page id="test2">
+
+          <ons-toolbar>
+            <div class="left">
+              <ons-back-button>Back</ons-back-button>
+            </div>
+            <div class="center"></div>
+          </ons-toolbar>
+          <div class="col-sm-3 col-sm-offset-4 frame">
+            <ul></ul>
+            <div>
+              <div class="msj-rta macro">
+                <div class="text text-r" style="background:whitesmoke !important">
+                  <input class="mytext" placeholder="Type a message" />
+                </div>
+
+              </div>
+              <div style="padding:10px;">
+                <span class="glyphicon glyphicon-share-alt"></span>
               </div>
             </div>
           </div>
-        </ons-card>
-        <ons-list-item>
-          <div class="center" style="font-size: 12px;">สถานะร้าน &nbsp;</div>
-          <div class="right">
-            <ons-switch checked></ons-switch>
-          </div>
-        </ons-list-item>
-        </div>
 
-      </ons-card>
-    </ons-page>
-  </template>
-  <template id="chat.html">
-    <ons-page id="test2">
-
-      <ons-toolbar>
-        <div class="left">
-          <ons-back-button>Back</ons-back-button>
-        </div>
-        <div class="center"></div>
-      </ons-toolbar>
-      <div class="col-sm-3 col-sm-offset-4 frame">
-        <ul></ul>
-        <div>
-          <div class="msj-rta macro">
-            <div class="text text-r" style="background:whitesmoke !important">
-              <input class="mytext" placeholder="Type a message" />
-            </div>
-
-          </div>
-          <div style="padding:10px;">
-            <span class="glyphicon glyphicon-share-alt"></span>
-          </div>
-        </div>
-      </div>
-
-      <style>
-        .mytext {
-          border: 0;
-          padding: 10px 10px 10px 10px;
-          font-size: 20px;
-          background: whitesmoke;
-        }
-
-        .text {
-          width: 75%;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .text>p:first-of-type {
-          width: 100%;
-          margin-top: 5px;
-          margin-bottom: auto;
-          line-height: 20px;
-          font-size: 20px;
-        }
-
-        .text>p:last-of-type {
-          width: 100%;
-          text-align: right;
-          color: silver;
-          margin-bottom: -7px;
-          margin-top: auto;
-        }
-
-        .text-l {
-          float: left;
-          padding-right: 10px;
-        }
-
-        .text-r {
-          float: right;
-          padding-left: 10px;
-        }
-
-        .avatar {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 25%;
-          float: left;
-          padding-right: 10px;
-        }
-
-        .macro {
-          margin-top: 10px;
-          width: 85%;
-          border-radius: 5px;
-          padding: 5px;
-
-          display: flex;
-        }
-
-        .msj-rta {
-          float: right;
-          background: whitesmoke;
-        }
-
-        .msj {
-          float: left;
-          background: white;
-        }
-
-        .frame {
-          background: #e0e0de;
-          height: 100%;
-          overflow: hidden;
-          padding: 0;
-        }
-
-        .frame>div:last-of-type {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          height: 70px;
-          display: flex;
-        }
-
-        body>div>div>div:nth-child(2)>span {
-          background: whitesmoke;
-          padding: 10px;
-          font-size: 21px;
-          border-radius: 50%;
-        }
-
-        body>div>div>div.msj-rta.macro {
-          margin: auto;
-          margin-left: 1%;
-        }
-
-        ul {
-          width: 100%;
-          list-style-type: none;
-          padding: 18px;
-          position: absolute;
-          bottom: 47px;
-          display: flex;
-          flex-direction: column;
-          top: 0;
-          overflow-y: scroll;
-        }
-
-        .msj:before {
-          width: 0;
-          height: 0;
-          content: "";
-          top: -5px;
-          left: -14px;
-          position: relative;
-          border-style: solid;
-          border-width: 0 13px 13px 0;
-          border-color: transparent #ffffff transparent transparent;
-        }
-
-        .msj-rta:after {
-          width: 0;
-          height: 0;
-          content: "";
-          top: -5px;
-          left: 14px;
-          position: relative;
-          border-style: solid;
-          border-width: 13px 13px 0 0;
-          border-color: whitesmoke transparent transparent transparent;
-        }
-
-        input:focus {
-          outline: none;
-        }
-
-        ::-webkit-input-placeholder {
-          /* Chrome/Opera/Safari */
-          color: #d4d4d4;
-        }
-
-        ::-moz-placeholder {
-          /* Firefox 19+ */
-          color: #d4d4d4;
-        }
-
-        :-ms-input-placeholder {
-          /* IE 10+ */
-          color: #d4d4d4;
-        }
-
-        :-moz-placeholder {
-          /* Firefox 18- */
-          color: #d4d4d4;
-        }
-      </style>
-      <script>
-
-        var me = {};
-        me.avatar = "img/boy.png";
-        var you = {};
-        you.avatar = "img/man.png";
-sssssssssssss                                                 
-        function formatAMPM(date) {
-          var hours = date.getHours();
-          var minutes = date.getMinutes();
-          var ampm = hours >= 12 ? 'PM' : 'AM';
-          hours = hours % 12;
-          hours = hours ? hours : 12; // the hour '0' should be '12'
-          minutes = minutes < 10 ? '0' + minutes : minutes;
-          var strTime = hours + ':' + minutes + ' ' + ampm;
-          return strTime;
-        }
-
-        //-- No use time. It is a javaScript effect.
-        function insertChat(who, text, time) {
-          if (time === undefined) {
-            time = 0;
-          }
-          var control = "";
-          var date = formatAMPM(new Date());
-
-          if (who == "me") {
-
-            control = '<li style="width:100%;">' +
-              '<div class="msj-rta macro">' +
-              '<div class="text text-r">' +
-              '<p>' + text + '</p>' +
-              '<p style="font-size:15px"><small id="date">' + date + '</small></p>' +
-              '</div>' +
-              '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="' + you.avatar + '" /></div>' +
-              '</li>';
-          } else {
-            control = '<li style="width:100%">' +
-              '<div class="msj macro">' +
-              '<div class="avatar"><img class="img-circle" style="width:100%;" src="' + me.avatar + '" /></div>' +
-              '<div class="text text-l">' +
-              '<p>' + text + '</p>' +
-              '<p style="font-size:15px"><small >' + date + '</small></p>' +
-              '</div>' +
-              '</div>' +
-              '</li>';
-          }
-          setTimeout(
-            function () {
-              $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
-            }, time);
-
-        }
-
-        function resetChat() {
-          $("ul").empty();
-        }
-
-        $(".mytext").on("keydown", function (e) {
-          if (e.which == 13) {
-            var text = $(this).val();
-            if (text !== "") {
-              firestore.collection("Chat").doc().get().then(function (querySnapshot) {
-                
-                firestore.collection('Chat').doc("two").set({
-                
-                 msg2 : text
-
-                }).then(function () {
-                  console.log("Status saved!");
-                }).catch(function (error) {
-                  console.log("Got an Error: ", error);
-
-                });
-              });
-              insertChat("me", text);
-              $(this).val('');
+          <style>
+            .mytext {
+              border: 0;
+              padding: 10px 10px 10px 10px;
+              font-size: 20px;
+              background: whitesmoke;
             }
-          }
-        });
 
-        $('body > div > div > div:nth-child(2) > span').click(function () {
-          $(".mytext").trigger({ type: 'keydown', which: 13, keyCode: 13 });
-        })
+            .text {
+              width: 75%;
+              display: flex;
+              flex-direction: column;
+            }
 
-        //-- Clear Chat
-        resetChat();
+            .text>p:first-of-type {
+              width: 100%;
+              margin-top: 5px;
+              margin-bottom: auto;
+              line-height: 20px;
+              font-size: 20px;
+            }
 
-        // //-- Print Messages
-        $(".mytext", function (e) {
-        firestore.collection("Chat").doc("one").get().then(function (doc) {
+            .text>p:last-of-type {
+              width: 100%;
+              text-align: right;
+              color: silver;
+              margin-bottom: -7px;
+              margin-top: auto;
+            }
 
-                  insertChat("you", doc.data().msg1, 3000);
+            .text-l {
+              float: left;
+              padding-right: 10px;
+            }
+
+            .text-r {
+              float: right;
+              padding-left: 10px;
+            }
+
+            .avatar {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              width: 25%;
+              float: left;
+              padding-right: 10px;
+            }
+
+            .macro {
+              margin-top: 10px;
+              width: 85%;
+              border-radius: 5px;
+              padding: 5px;
+
+              display: flex;
+            }
+
+            .msj-rta {
+              float: right;
+              background: whitesmoke;
+            }
+
+            .msj {
+              float: left;
+              background: white;
+            }
+
+            .frame {
+              background: #e0e0de;
+              height: 100%;
+              overflow: hidden;
+              padding: 0;
+            }
+
+            .frame>div:last-of-type {
+              position: absolute;
+              bottom: 0;
+              width: 100%;
+              height: 70px;
+              display: flex;
+            }
+
+            body>div>div>div:nth-child(2)>span {
+              background: whitesmoke;
+              padding: 10px;
+              font-size: 21px;
+              border-radius: 50%;
+            }
+
+            body>div>div>div.msj-rta.macro {
+              margin: auto;
+              margin-left: 1%;
+            }
+
+            ul {
+              width: 100%;
+              list-style-type: none;
+              padding: 18px;
+              position: absolute;
+              bottom: 47px;
+              display: flex;
+              flex-direction: column;
+              top: 0;
+              overflow-y: scroll;
+            }
+
+            .msj:before {
+              width: 0;
+              height: 0;
+              content: "";
+              top: -5px;
+              left: -14px;
+              position: relative;
+              border-style: solid;
+              border-width: 0 13px 13px 0;
+              border-color: transparent #ffffff transparent transparent;
+            }
+
+            .msj-rta:after {
+              width: 0;
+              height: 0;
+              content: "";
+              top: -5px;
+              left: 14px;
+              position: relative;
+              border-style: solid;
+              border-width: 13px 13px 0 0;
+              border-color: whitesmoke transparent transparent transparent;
+            }
+
+            input:focus {
+              outline: none;
+            }
+
+            ::-webkit-input-placeholder {
+              /* Chrome/Opera/Safari */
+              color: #d4d4d4;
+            }
+
+            ::-moz-placeholder {
+              /* Firefox 19+ */
+              color: #d4d4d4;
+            }
+
+            :-ms-input-placeholder {
+              /* IE 10+ */
+              color: #d4d4d4;
+            }
+
+            :-moz-placeholder {
+              /* Firefox 18- */
+              color: #d4d4d4;
+            }
+          </style>
+          <script>
+
+            var me = {};
+            me.avatar = "img/man.png";
+            var you = {};
+            you.avatar = "img/boy.png";
+
+            function formatAMPM(date) {
+              var hours = date.getHours();
+              var minutes = date.getMinutes();
+              var ampm = hours >= 12 ? 'PM' : 'AM';
+              hours = hours % 12;
+              hours = hours ? hours : 12; // the hour '0' should be '12'
+              minutes = minutes < 10 ? '0' + minutes : minutes;
+              var strTime = hours + ':' + minutes + ' ' + ampm;
+              return strTime;
+            }
+
+            //-- No use time. It is a javaScript effect.
+            function insertChat(who, text, time) {
+              if (time === undefined) {
+                time = 0;
+              }
+              var control = "";
+              var date = formatAMPM(new Date());
+
+              if (who == "me") {
+
+                control = '<li style="width:100%;">' +
+                  '<div class="msj-rta macro">' +
+                  '<div class="text text-r">' +
+                  '<p>' + text + '</p>' +
+                  '<p style="font-size:15px"><small id="date">' + date + '</small></p>' +
+                  '</div>' +
+                  '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="' + me.avatar + '" /></div>' +
+                  '</li>';
+              } else {
+                control = '<li style="width:100%">' +
+                  '<div class="msj macro">' +
+                  '<div class="avatar"><img class="img-circle" style="width:100%;" src="' + you.avatar + '" /></div>' +
+                  '<div class="text text-l">' +
+                  '<p>' + text + '</p>' +
+                  '<p style="font-size:15px"><small >' + date + '</small></p>' +
+                  '</div>' +
+                  '</div>' +
+                  '</li>';
+              }
+              setTimeout(
+                function () {
+                  $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
+                }, time);
+
+            }
+
+            function resetChat() {
+              $("ul").empty();
+            }
+
+            $(".mytext").on("keydown", function (e) {
+              if (e.which == 13) {
+                var text = $(this).val();
+                if (text !== "") {
+                  firestore.collection("messages").get().then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                      firebase.firestore().collection('messages').doc('MTUN0SgUZvWIk57nVA1a').collection('msg').add({
+                        name: "testStore",
+                        text: text,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                      }).catch(function (error) {
+                        console.error('Error writing new message to Firebase Database', error);
+                      });
+                    });
+                  });
+                  insertChat("me", text);
+                  $(this).val('');
+                }
+              }
+            });
+
+            $('body > div > div > div:nth-child(2) > span').click(function () {
+              $(".mytext").trigger({ type: 'keydown', which: 13, keyCode: 13 });
+            })
+
+            //-- Clear Chat
+            resetChat();
+
+            // //-- Print Messages
+            $(".mytext", function (e) {
+              firestore.collection("Chat").doc("one").get().then(function (doc) {
+
+                insertChat("you", doc.data().msg1, 3000);
 
 
-        });
-        
+              });
 
 
-});
+
+            });
         // insertChat("me", "Hello Tom...",0);
         // insertChat("you", "Hi, Pablo", 1500);
         // insertChat("me", "What would you like to talk about today?", 3500);
@@ -432,8 +464,8 @@ sssssssssssss
 
 
 //-- NOTE: No use time on insertChat.</script>
-    </ons-page>
-  </template>
+        </ons-page>
+      </template>
 
     </ons-page>
 
@@ -492,7 +524,7 @@ sssssssssssss
 
   </script>
   <!--  ======================================================tab1===================================================== -->
-  
+
   <!--  ======================================================tab2===================================================== -->
   <template id="tab2.html">
     <ons-page id="Tab2">
@@ -627,12 +659,32 @@ sssssssssssss
       }).catch(function (error) {
         // An error happened.
       });
+      localstorage.clear()
     }
 
     function chat() {
       document.querySelector('#myNavigator').pushPage('chat.html');
 
     }
+
+    var email = localStorage.getItem("email");
+
+    firestore.collection("Technicians").get().then(function (querySnapshot) {
+      querySnapshot.forEach(function (doc) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        if (email == doc.data().email) {
+          console.log("namestore" + doc.data().namestore);
+          document.getElementById('namestore').innerHTML = doc.data().namestore;
+          localStorage.setItem('namestore', doc.data().namestore);
+          document.getElementById('addressstore').innerHTML = doc.data().address;
+          document.getElementById('codestore').innerHTML = doc.data().codestore;
+        }
+      });
+    });
+
+
+
   </script>
 
   <!-- <script type="text/javascript" src="cordova.js"></script> -->

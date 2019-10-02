@@ -24,5 +24,6 @@ function onError(error) {
 
 
 
+
 // var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 3000 });
 // navigator.geolocation.clearWatch(watchID);
