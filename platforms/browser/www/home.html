@@ -117,7 +117,7 @@
 
           <!-- ข้อมูลของร้าน -->
           <ons-card>
-            <ons-card style="background-color: #cce3f0;" onclick="createAlertDialog()">
+            <ons-card style="background-color: #cce3f0;">
               <div class="row">
                 <div class="col col-3">
                   <img src="img/user.png" alt="Onsen UI" style="width: 120%">
@@ -145,31 +145,68 @@
             <ons-list-item>
               <div class="center" style="font-size: 12px;">สถานะร้าน &nbsp;</div>
               <div class="right">
-                <ons-switch></ons-switch>
+                <ons-switch checked></ons-switch>
                 <script>
                   function status() {
-                     document.querySelector('ons-switch').addEventListener('change', function (){
-                    var namestore_get = localStorage.getItem("namestore");
-                    if (event.value == true) {
-                      
-                      var firestoreRef = firestore.collection("Technicians").doc(namestore_get)
-                      var updateStatus = firestoreRef.update({
-                        status: "on"
-                      });
-                      console.log(' on ');
+                    document.querySelector('ons-switch').addEventListener('change', function () {
+                      var namestore_get = localStorage.getItem("namestore");
+                      if (event.value == true) {
 
-                    } else {
-                       var firestoreRef = firestore.collection("Technicians").doc(namestore_get)
-                      var updateStatus = firestoreRef.update({
-                        status: "off"
-                      });
-                      console.log(' off ');
-                    }
-                  })
+                        var firestoreRef = firestore.collection("Technicians").doc(namestore_get)
+                        var updateStatus = firestoreRef.update({
+                          status: "on"
+
+                        });
+                        console.log(' on ');
+
+                        notifyFix();
+                      } else {
+                        var firestoreRef = firestore.collection("Technicians").doc(namestore_get)
+                        var updateStatus = firestoreRef.update({
+                          status: "off"
+                        });
+                        console.log(' off ');
+                      }
+                    })
                   }
-                 
 
                   status();
+
+                  function notifyFix() {
+                    var namestore_requert = localStorage.getItem("namestore");
+
+                    firestore.collection("requestFix").where("namestore", "==", namestore_requert)
+                      .onSnapshot(function (snapshot) {
+                        snapshot.docChanges().forEach(function (change) {
+                          if (change.type === "added" && change.doc.data().accept == 0) {
+                            console.log("Added added requestFix: ", change.doc.data());
+                            localStorage.setItem('FixID', change.doc.data().fixID);
+                            createAlertDialog();
+                          }
+                          if (change.type === "modified" && change.doc.data().accept == 0 && change.doc.data().request == 1) {
+                            console.log("Modified modified requestFix: ", change.doc.data());
+                            // console.log("change.doc.data() ==>" + change.doc.data().accept);
+                            // var accept = change.doc.data().accept;
+                            localStorage.setItem('FixID', change.doc.data().fixID);
+                            createAlertDialog();
+                          }
+                          if (change.type === "removed") {
+                            console.log("Removed removed requestFix: ", change.doc.data());
+                          }
+                        });
+                      })
+
+
+                    // .then(function (docRef) {
+                    //   console.log("requestFix  "+docRef.id+" success");
+
+                    //   });
+                  }
+
+
+
+
+
                 </script>
               </div>
             </ons-list-item>
@@ -201,7 +238,7 @@
               </div>
             </div>
           </div>
-
+          <!-- style chat  -->
           <style>
             .mytext {
               border: 0;
@@ -357,6 +394,7 @@
               color: #d4d4d4;
             }
           </style>
+          <!-- script chat  -->
           <script>
 
             var me = {};
@@ -478,8 +516,8 @@
         กด "รับซ่อม" เมื่อมีการตกลงเรียกซ่อม
       </div>
       <div class="alert-dialog-footer">
-        <ons-alert-dialog-button onclick="hideAlertDialog()">ยกเลิก</ons-alert-dialog-button>
-        <ons-alert-dialog-button onclick="myNavFunc()">รับซ่อม</ons-alert-dialog-button>
+        <ons-alert-dialog-button onclick="cancelFix()">ยกเลิก</ons-alert-dialog-button>
+        <ons-alert-dialog-button onclick="acceptFix()">รับซ่อม</ons-alert-dialog-button>
       </div>
     </ons-alert-dialog>
   </template>
@@ -500,15 +538,45 @@
 
     var hideAlertDialog = function () {
 
-      document
-        .getElementById('my-alert-dialog')
-        .hide();
+      document.getElementById('my-alert-dialog').hide();
+      myNavFunc();
 
     };
+
+    function acceptFix() {
+      var DocFix = localStorage.getItem("FixID");
+      firestore.collection("requestFix").doc(DocFix).update({
+        accept: 1,
+        request: 0,
+        done: 1
+
+      })
+        .then(function () {
+          console.log("Accept Fix successfully !");
+          // document.getElementById('my-alert-dialog').hide();
+          hideAlertDialog();
+        });
+
+      // myNavFunc();
+
+    }
+
+    function cancelFix() {
+      var DocFix = localStorage.getItem("FixID");
+      firestore.collection("requestFix").doc(DocFix).update({
+        accept: 2,
+        request: 2,
+        done: 0
+
+      })
+        .then(function () {
+          console.log("cancel Fix successfully !");
+          document.getElementById('my-alert-dialog').hide();
+        });
+    }
+
     function myNavFunc() {
-      document
-        .getElementById('my-alert-dialog')
-        .hide();
+      // document.getElementById('my-alert-dialog').hide();
 
       var long = 98.3370182;
       var lat = 7.8947922;
@@ -548,18 +616,66 @@
 
       <template id="page1.html">
         <ons-page>
-          <ons-list-header>09/08/2019</ons-list-header>
-          <ons-card class="notificate">
-            <span>กำลังทำการซ่อมของ นายเทน อเดช</span>
-            <span class="notitext">คุณกำลังทำรายการซ่อมของ นายเทน อเดช หากทำรายการซ่อมเสร็จเรียบร้อยโปรดยืนยัน </span>
-            <button type="button" class="btn btn-outline-success" onclick="showAlert()"><i
-                class="fa fa-check"></i></button>
-            <script>
-              var showAlert = function () {
-                ons.notification.alert('ยืนยันรายการซ่อมเสร็จเรียบร้อย');
-              };
-            </script>
-          </ons-card>
+          <ons-list-header id="timenotify"></ons-list-header>
+          <script>
+            var date = new Date();
+            document.getElementById("timenotify").innerHTML = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + "::" + date.toLocaleTimeString();
+
+          </script>
+          <div id="showdoingfixlist">
+
+          </div>
+
+          <script>
+
+            var showAlert = function () {
+              ons.notification.alert('ยืนยันรายการซ่อมเสร็จเรียบร้อย');
+              var DocFix = localStorage.getItem("FixID");
+              firestore.collection("requestFix").doc(DocFix).update({
+                accept: 1,
+                request: 0,
+                done: 2
+              })
+                .then(function () {
+                  console.log("Accept Fix done !");
+                  // document.getElementById('my-alert-dialog').hide();
+                });
+
+            };
+
+            function showListDoingFix() {
+              var namestore_requert = localStorage.getItem("namestore");
+
+              firestore.collection("requestFix").where("namestore", "==", namestore_requert)
+                .onSnapshot(function (snapshot) {
+                  snapshot.docChanges().forEach(function (change) {
+
+                    if (change.doc.data().accept == 1 && change.doc.data().request == 0 && change.doc.data().done == 1) {
+                      console.log("Modified modified requestFix: ", change.doc.data());
+
+                      $('#showdoingfixlist').append(
+
+                        '<ons-card>' +
+                        ' <div id="titlenotify" style="font-size: 17px">กำลังทำการซ่อมของ !!! ' + change.doc.data().customer +
+                        '</div>' +
+                        ' <div id="textnotify" style="font-size: 12px">คุณกำลังทำรายการซ่อมของ ( ' + change.doc.data().customer + ') หากทำรายการซ่อมเสร็จเรียบร้อยโปรดยืนยัน  !!!' +
+                        '</div>' +
+                        ' <br>' +
+                        ' <button type="button" class="btn btn-outline-success btn-lg" onclick="showAlert()"><i class="fa fa-check"></i></button>' +
+                        ' </ons-card>'
+
+                      )
+
+                    }
+
+                  });
+                })
+
+            }
+
+            showListDoingFix();
+          </script>
+
 
 
         </ons-page>
@@ -568,11 +684,48 @@
 
       <template id="page2.html">
         <ons-page>
-          <ons-list-header>20/06/2019</ons-list-header>
-          <ons-card class="notificate">
-            <span>ทำการซ่อมเสร็จเรียบร้อย</span>
-            <span class="notitext">คุณได้ทำรายการซ่อมของ นายสมยุทธ์ ลาพักงาน เสร็จเรียบร้อยแล้ว เมื่อ 18.06 น.</span>
-          </ons-card>
+          <ons-list-header id="timenotifydone"></ons-list-header>
+          <script>
+            var date = new Date();
+            document.getElementById("timenotifydone").innerHTML = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + "::" + date.toLocaleTimeString();
+
+          </script>
+          <div id="showdonefixlist"> </div>
+      
+
+          <script>
+            function showListDoneFix() {
+              var namestore_requert = localStorage.getItem("namestore");
+
+              firestore.collection("requestFix").where("namestore", "==", namestore_requert)
+                .onSnapshot(function (snapshot) {
+                  snapshot.docChanges().forEach(function (change) {
+
+                    if (change.doc.data().accept == 1 && change.doc.data().request == 0 && change.doc.data().done == 2) {
+                      console.log("Modified modified requestFix: ", change.doc.data());
+
+                      $('#showdonefixlist').append(
+
+                        '<ons-card>' +
+                        ' <div id="titlenotify" style="font-size: 17px">กำลังทำการซ่อมของ !!! ' + change.doc.data().customer +
+                        '</div>' +
+                        ' <div id="textnotify" style="font-size: 12px">รายการการซ่อมของ ( ' + change.doc.data().customer + ') ได้ดำเนินการเสร็จแล้ว   !!!' +
+                        '</div>' +
+                        
+                       
+                        ' </ons-card>'
+
+                      )
+
+                    }
+
+                  });
+                })
+
+     
+            }
+            showListDoneFix();
+          </script>
         </ons-page>
       </template>
     </ons-page>
@@ -604,6 +757,8 @@
         </div>
       </ons-card>
     </ons-page>
+
+    
   </template>
   <!--  ======================================================tab3===================================================== -->
 
@@ -628,16 +783,16 @@
 
       if (event.index == 0) {
         console.log('home clicked');
-        // get data for map screen  
+        // get data for map screen
 
       } else if (event.index == 1) {
         console.log('history clicked');
-        // get data for coins screen  
+        // get data for coins screen
 
       }
       else if (event.index == 2) {
         console.log('setting clicked');
-        // get data for history screen  
+        // get data for history screen
       }
 
 
