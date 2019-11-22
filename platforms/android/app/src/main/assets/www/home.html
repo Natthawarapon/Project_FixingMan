@@ -7,7 +7,7 @@
   <meta name="viewport"
     content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
@@ -28,6 +28,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
+  <!-- cordova script (this will be a 404 during development) -->
+<script src="cordova.js"></script>
   <link rel="stylesheet" type="text/css" href="css/home.css">
 
   <title>FixingMan</title>
@@ -53,43 +55,45 @@
 </head>
 
 <body>
-  <!--  Page  -->
-  <ons-page>
-    <!--   toolbar  -->
-    <ons-toolbar style="background-color:  #ffb700 ">
-      <div class="left">
-        <ons-toolbar-button>
-          <ons-icon onclick="chat()" icon="fa-bell" style="color: black"></ons-icon>
-        </ons-toolbar-button>
-      </div>
+  <ons-navigator swipeable id="myNavigator1">
+    <!--  Page  -->
+    <ons-page>
+      <!--   toolbar  -->
+      <ons-toolbar style="background-color:  #ffb700 ">
+        <div class="left">
+          <ons-toolbar-button>
+            <ons-icon onclick="chat()" icon="fa-bell" style="color: black"></ons-icon>
+          </ons-toolbar-button>
+        </div>
 
-      <div class="center">Fixing Man</div>
+        <div class="center">Fixing Man</div>
 
-      <div class="right">
-        <ons-toolbar-button>
-          <ons-icon icon="fa-sign-out-alt" style="color: black" onclick="logout()"></ons-icon>
-        </ons-toolbar-button>
-      </div>
-    </ons-toolbar>
-    <!--  //toolbar  -->
-
-    <!--   toolbar  -->
-    <ons-tabbar style="background-color: #ffb700" swipeable position="under">
-      <ons-tab style="background-color: #ffb700" page="tab1.html" label="Home" icon="fa-home, material:fa-home" active>
-      </ons-tab>
-      <ons-tab style="background-color: #ffb700" page="tab2.html" label="History" icon="fa-history"
-        active-icon="fa-history">
-      </ons-tab>
-      <ons-tab style="background-color: #ffb700" page="tab3.html" label="Setttings" icon="md-settings"
-        active-icon="md-settings">
-      </ons-tab>
-    </ons-tabbar>
-    <!-- //toolbar -->
-  </ons-page>
-  <!--  //page ========= -->
-
+        <div class="right">
+          <ons-toolbar-button>
+            <ons-icon icon="fa-sign-out-alt" style="color: black" onclick="logout()"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+      </ons-toolbar>
+      <!--  //toolbar  -->
+      
+      <!--   toolbar  -->
+      <ons-tabbar style="background-color: #ffb700" swipeable position="under">
+        <ons-tab style="background-color: #ffb700" page="tab1.html" label="Home" icon="fa-home, material:fa-home"
+          active>
+        </ons-tab>
+        <ons-tab style="background-color: #ffb700" page="tab2.html" label="History" icon="fa-history"
+          active-icon="fa-history">
+        </ons-tab>
+        <ons-tab style="background-color: #ffb700" page="tab3.html" label="Setttings" icon="md-settings"
+          active-icon="md-settings">
+        </ons-tab>
+      </ons-tabbar>
+      <!-- //toolbar -->
+    </ons-page>
+    <!--  //page ========= -->
+  </ons-navigator>
   <!--  ======================================================tab1 >> Maps ===================================================== -->
-
+  <!-- <ons-navigator swipeable id="myNavigator1" ></ons-navigator> -->
   <template id="tab1.html">
     <ons-page id="Tab1">
       <ons-navigator swipeable id="myNavigator" page="test1.html"></ons-navigator>
@@ -102,7 +106,7 @@
             <script>
               var map = L.map('map').setView([7.893946673324378, 98.34969520568848], 13);
 
-              L.tileLayer('https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=prAnw6NTF7eaj3wF5QFK', {
+              L.tileLayer('https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=QmcdepuuuVAKQApwz93r', {
                 attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
 
               }).addTo(map);
@@ -180,11 +184,14 @@
                         snapshot.docChanges().forEach(function (change) {
                           if (change.type === "added" && change.doc.data().accept == 0) {
                             console.log("Added added requestFix: ", change.doc.data());
+                            localStorage.setItem('FixID', change.doc.data().fixID);
+                            // createAlertDialog();
                           }
                           if (change.type === "modified" && change.doc.data().accept == 0 && change.doc.data().request == 1) {
                             console.log("Modified modified requestFix: ", change.doc.data());
-                            // console.log("change.doc.data() ==>" + change.doc.data().accept);
-                            // var accept = change.doc.data().accept;
+                            console.log("change.doc.data() ==>" + change.doc.data().accept);
+                            var accept = change.doc.data().accept;
+                            console.log("Added added requestFix: ", change.doc.data());
                             localStorage.setItem('FixID', change.doc.data().fixID);
                             createAlertDialog();
                           }
@@ -213,295 +220,6 @@
           </ons-card>
         </ons-page>
       </template>
-      <template id="chat.html">
-        <ons-page id="test2">
-
-          <ons-toolbar>
-            <div class="left">
-              <ons-back-button>Back</ons-back-button>
-            </div>
-            <div class="center"></div>
-          </ons-toolbar>
-          <div class="col-sm-3 col-sm-offset-4 frame">
-            <ul></ul>
-            <div>
-              <div class="msj-rta macro">
-                <div class="text text-r" style="background:whitesmoke !important">
-                  <input class="mytext" placeholder="Type a message" />
-                </div>
-
-              </div>
-              <div style="padding:10px;">
-                <span class="glyphicon glyphicon-share-alt"></span>
-              </div>
-            </div>
-          </div>
-          <!-- style chat  -->
-          <style>
-            .mytext {
-              border: 0;
-              padding: 10px 10px 10px 10px;
-              font-size: 20px;
-              background: whitesmoke;
-            }
-
-            .text {
-              width: 75%;
-              display: flex;
-              flex-direction: column;
-            }
-
-            .text>p:first-of-type {
-              width: 100%;
-              margin-top: 5px;
-              margin-bottom: auto;
-              line-height: 20px;
-              font-size: 20px;
-            }
-
-            .text>p:last-of-type {
-              width: 100%;
-              text-align: right;
-              color: silver;
-              margin-bottom: -7px;
-              margin-top: auto;
-            }
-
-            .text-l {
-              float: left;
-              padding-right: 10px;
-            }
-
-            .text-r {
-              float: right;
-              padding-left: 10px;
-            }
-
-            .avatar {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              width: 25%;
-              float: left;
-              padding-right: 10px;
-            }
-
-            .macro {
-              margin-top: 10px;
-              width: 85%;
-              border-radius: 5px;
-              padding: 5px;
-
-              display: flex;
-            }
-
-            .msj-rta {
-              float: right;
-              background: whitesmoke;
-            }
-
-            .msj {
-              float: left;
-              background: white;
-            }
-
-            .frame {
-              background: #e0e0de;
-              height: 100%;
-              overflow: hidden;
-              padding: 0;
-            }
-
-            .frame>div:last-of-type {
-              position: absolute;
-              bottom: 0;
-              width: 100%;
-              height: 70px;
-              display: flex;
-            }
-
-            body>div>div>div:nth-child(2)>span {
-              background: whitesmoke;
-              padding: 10px;
-              font-size: 21px;
-              border-radius: 50%;
-            }
-
-            body>div>div>div.msj-rta.macro {
-              margin: auto;
-              margin-left: 1%;
-            }
-
-            ul {
-              width: 100%;
-              list-style-type: none;
-              padding: 18px;
-              position: absolute;
-              bottom: 47px;
-              display: flex;
-              flex-direction: column;
-              top: 0;
-              overflow-y: scroll;
-            }
-
-            .msj:before {
-              width: 0;
-              height: 0;
-              content: "";
-              top: -5px;
-              left: -14px;
-              position: relative;
-              border-style: solid;
-              border-width: 0 13px 13px 0;
-              border-color: transparent #ffffff transparent transparent;
-            }
-
-            .msj-rta:after {
-              width: 0;
-              height: 0;
-              content: "";
-              top: -5px;
-              left: 14px;
-              position: relative;
-              border-style: solid;
-              border-width: 13px 13px 0 0;
-              border-color: whitesmoke transparent transparent transparent;
-            }
-
-            input:focus {
-              outline: none;
-            }
-
-            ::-webkit-input-placeholder {
-              /* Chrome/Opera/Safari */
-              color: #d4d4d4;
-            }
-
-            ::-moz-placeholder {
-              /* Firefox 19+ */
-              color: #d4d4d4;
-            }
-
-            :-ms-input-placeholder {
-              /* IE 10+ */
-              color: #d4d4d4;
-            }
-
-            :-moz-placeholder {
-              /* Firefox 18- */
-              color: #d4d4d4;
-            }
-          </style>
-          <!-- script chat  -->
-          <script>
-
-            var me = {};
-            me.avatar = "img/man.png";
-            var you = {};
-            you.avatar = "img/boy.png";
-
-            function formatAMPM(date) {
-              var hours = date.getHours();
-              var minutes = date.getMinutes();
-              var ampm = hours >= 12 ? 'PM' : 'AM';
-              hours = hours % 12;
-              hours = hours ? hours : 12; // the hour '0' should be '12'
-              minutes = minutes < 10 ? '0' + minutes : minutes;
-              var strTime = hours + ':' + minutes + ' ' + ampm;
-              return strTime;
-            }
-
-            //-- No use time. It is a javaScript effect.
-            function insertChat(who, text, time) {
-              if (time === undefined) {
-                time = 0;
-              }
-              var control = "";
-              var date = formatAMPM(new Date());
-
-              if (who == "me") {
-
-                control = '<li style="width:100%;">' +
-                  '<div class="msj-rta macro">' +
-                  '<div class="text text-r">' +
-                  '<p>' + text + '</p>' +
-                  '<p style="font-size:15px"><small id="date">' + date + '</small></p>' +
-                  '</div>' +
-                  '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="' + me.avatar + '" /></div>' +
-                  '</li>';
-              } else {
-                control = '<li style="width:100%">' +
-                  '<div class="msj macro">' +
-                  '<div class="avatar"><img class="img-circle" style="width:100%;" src="' + you.avatar + '" /></div>' +
-                  '<div class="text text-l">' +
-                  '<p>' + text + '</p>' +
-                  '<p style="font-size:15px"><small >' + date + '</small></p>' +
-                  '</div>' +
-                  '</div>' +
-                  '</li>';
-              }
-              setTimeout(
-                function () {
-                  $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
-                }, time);
-
-            }
-
-            function resetChat() {
-              $("ul").empty();
-            }
-
-            $(".mytext").on("keydown", function (e) {
-              if (e.which == 13) {
-                var text = $(this).val();
-                if (text !== "") {
-                  firestore.collection("messages").get().then(function (querySnapshot) {
-                    querySnapshot.forEach(function (doc) {
-                      firebase.firestore().collection('messages').doc('MTUN0SgUZvWIk57nVA1a').collection('msg').add({
-                        name: "testStore",
-                        text: text,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                      }).catch(function (error) {
-                        console.error('Error writing new message to Firebase Database', error);
-                      });
-                    });
-                  });
-                  insertChat("me", text);
-                  $(this).val('');
-                }
-              }
-            });
-
-            $('body > div > div > div:nth-child(2) > span').click(function () {
-              $(".mytext").trigger({ type: 'keydown', which: 13, keyCode: 13 });
-            })
-
-            //-- Clear Chat
-            resetChat();
-
-            // //-- Print Messages
-            $(".mytext", function (e) {
-              firestore.collection("Chat").doc("one").get().then(function (doc) {
-
-                insertChat("you", doc.data().msg1, 3000);
-
-
-              });
-
-
-
-            });
-        // insertChat("me", "Hello Tom...",0);
-        // insertChat("you", "Hi, Pablo", 1500);
-        // insertChat("me", "What would you like to talk about today?", 3500);
-        // insertChat("you", "Tell me a joke", 7000);
-        // insertChat("me", "Spaceman: Computer! Computer! Do we bring battery?!", 9500);
-        // insertChat("you", "LOL", 12000);
-
-
-//-- NOTE: No use time on insertChat.</script>
-        </ons-page>
-      </template>
 
     </ons-page>
 
@@ -523,7 +241,6 @@
   <script>
     var createAlertDialog = function () {
       var dialog = document.getElementById('my-alert-dialog');
-
       if (dialog) {
         dialog.show();
       } else {
@@ -548,15 +265,16 @@
         request: 0,
         done: 1
 
-      })
-        .then(function () {
+      }).then(function () {
           console.log("Accept Fix successfully !");
+          // document.getElementById('my-alert-dialog').hide();  
+
           // document.getElementById('my-alert-dialog').hide();
-          hideAlertDialog();
+      myNavFunc();
+         
         });
 
       // myNavFunc();
-
     }
 
     function cancelFix() {
@@ -575,7 +293,7 @@
 
     function myNavFunc() {
       // document.getElementById('my-alert-dialog').hide();
-
+      document.getElementById('my-alert-dialog').hide();
       var long = 98.3370182;
       var lat = 7.8947922;
       // If it's an iPhone..
@@ -636,6 +354,7 @@
               })
                 .then(function () {
                   console.log("Accept Fix done !");
+                  window.location.reload(true);
                   // document.getElementById('my-alert-dialog').hide();
                 });
 
@@ -650,13 +369,25 @@
 
                     if (change.doc.data().accept == 1 && change.doc.data().request == 0 && change.doc.data().done == 1) {
                       console.log("Modified modified requestFix: ", change.doc.data());
-
+                      localStorage.setItem('customer', change.doc.data().customer)
                       $('#showdoingfixlist').append(
 
                         '<ons-card>' +
-                        ' <div id="titlenotify" style="font-size: 17px">กำลังทำการซ่อมของ !!! ' + change.doc.data().customer +
+                        '<div class="container">' +
+                        '<div class="row">' +
+                        '<div class="col-sm-6">' +
+                        '<div class="title" style="font-size: 20px">กำลังทำการซ่อมของ !!! ' + change.doc.data().customer + '</div>' +
+                        ' <div class="content" style="font-size: 15px">กำลังมาคะ คุณ :' + change.doc.data().customer + 'รอสักครู่นะคะ.' +
                         '</div>' +
-                        ' <div id="textnotify" style="font-size: 12px">คุณกำลังทำรายการซ่อมของ ( ' + change.doc.data().customer + ') หากทำรายการซ่อมเสร็จเรียบร้อยโปรดยืนยัน  !!!' +
+                        '</div>' +
+                        ' <div class="col-sm-4">' +
+                        '<center>' +
+                        ' <button type="button" class="btn btn-outline-success"><a href="tel:0993044146"><i class="fa fa-phone" onclick=""></i></a></button>' +
+
+                        '<button type="button" class="btn btn-outline-warning " id="chatclick"><i class="fa fa-comment" onclick="chat()"></i></button>' +
+                        '</center>' +
+                        ' </div>' +
+                        '</div>' +
                         '</div>' +
                         ' <br>' +
                         ' <button type="button" class="btn btn-outline-success btn-lg" onclick="showAlert()"><i class="fa fa-check"></i></button>' +
@@ -670,11 +401,313 @@
                 })
 
             }
-
             showListDoingFix();
           </script>
 
+          <template id="chat.html">
+            <ons-page id="test2">
 
+              <ons-toolbar style="background-color: #ffb700">
+                <div class="left">
+                  <ons-back-button>Back</ons-back-button>
+                </div>
+                <div id="customerchat" class="center"></div>
+                <script>
+                  var customerchat = localStorage.getItem("customer");
+                  document.getElementById('customerchat').innerHTML = customerchat;
+                </script>
+              </ons-toolbar>
+              <div class="col-sm-3 col-sm-offset-4 frame">
+                <ul id="showmessages"></ul>
+
+                <div>
+                  <div class="msj-rta macro1">
+                    <div class="text text-r" style="background:whitesmoke !important">
+                      <input class="mytext" placeholder="Type a message" />
+                    </div>
+                  </div>
+                  <div style="padding:10px;">
+                    <!-- <span class="glyphicon glyphicon-share-alt"></span> -->
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary btn-md send" id="btn-chat">Send</button>
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+              <!-- style chat  -->
+              <style>
+                .mytext {
+
+                  border: 0;
+                  padding: 5px 5px 5px 5px;
+                  font-size: 15px;
+                  background: whitesmoke;
+                }
+
+                .text {
+                  width: 75%;
+                  display: flex;
+                  flex-direction: column;
+                }
+
+                .text>p:first-of-type {
+                  width: 100%;
+                  margin-top: 5px;
+                  margin-bottom: auto;
+                  line-height: 20px;
+                  font-size: 20px;
+                }
+
+                .text>p:last-of-type {
+                  width: 100%;
+                  text-align: right;
+                  color: silver;
+                  margin-bottom: -7px;
+                  margin-top: auto;
+                }
+
+                .text-l {
+                  float: left;
+                  padding-right: 10px;
+                }
+
+                .text-r {
+                  float: right;
+                  padding-left: 10px;
+                }
+
+                .avatar {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 25%;
+                  float: left;
+                  padding-right: 10px;
+                }
+
+                .macro {
+                  margin-top: 10px;
+                  width: 85%;
+                  border-radius: 5px;
+                  padding: 5px;
+
+                  display: flex;
+                }
+
+                .macro1 {
+                  margin-top: 10px;
+                  margin-left: 5px;
+                  width: 85%;
+                  height: 60%;
+
+                  padding: 5px 5px 5px 5px;
+                  border-radius: 15px 15px 15px 15px !important;
+                  border-top: 0 !important;
+
+                  display: flex;
+                }
+
+                .msj-rta {
+                  float: right;
+                  background: whitesmoke;
+                }
+
+                .msj {
+                  float: left;
+                  background: white;
+                }
+
+                .frame {
+                  background: #e0e0de;
+                  height: 100%;
+                  overflow: hidden;
+                  padding: 0;
+                }
+
+                .frame>div:last-of-type {
+                  position: absolute;
+                  bottom: 0;
+                  width: 100%;
+                  height: 70px;
+                  display: flex;
+                }
+
+                body>div>div>div:nth-child(2)>span {
+                  background: whitesmoke;
+                  padding: 10px;
+                  font-size: 21px;
+                  border-radius: 50%;
+                }
+
+                body>div>div>div.msj-rta.macro {
+                  margin: auto;
+                  margin-left: 1%;
+                }
+
+                ul {
+                  width: 100%;
+                  list-style-type: none;
+                  padding: 18px;
+                  position: absolute;
+                  bottom: 47px;
+                  display: flex;
+                  flex-direction: column;
+                  top: 0;
+                  overflow-y: scroll;
+                }
+
+                .msj:before {
+                  width: 0;
+                  height: 0;
+                  content: "";
+                  top: -5px;
+                  left: -14px;
+                  position: relative;
+                  border-style: solid;
+                  border-width: 0 13px 13px 0;
+                  border-color: transparent #ffffff transparent transparent;
+                }
+
+                .msj-rta:after {
+                  width: 0;
+                  height: 0;
+                  content: "";
+                  top: -5px;
+                  left: 14px;
+                  position: relative;
+                  border-style: solid;
+                  border-width: 13px 13px 0 0;
+                  border-color: whitesmoke transparent transparent transparent;
+                }
+
+                input:focus {
+                  outline: none;
+                }
+
+                ::-webkit-input-placeholder {
+                  /* Chrome/Opera/Safari */
+                  color: #d4d4d4;
+                }
+
+                ::-moz-placeholder {
+                  /* Firefox 19+ */
+                  color: #d4d4d4;
+                }
+
+                :-ms-input-placeholder {
+                  /* IE 10+ */
+                  color: #d4d4d4;
+                }
+
+                :-moz-placeholder {
+                  /* Firefox 18- */
+                  color: #d4d4d4;
+                }
+              </style>
+              <!-- script chat  -->
+              <script>
+
+                var me = {};
+                me.avatar = "img/man.png";
+                var you = {};
+                you.avatar = "img/boy.png";
+
+
+
+
+                function loadMessage() {
+                  var FixID = localStorage.getItem("FixID");
+                  var displayNamechat = localStorage.getItem("namestore");
+                  var query = firestore.collection('messages').doc(FixID).collection('msg').orderBy('timestamp', 'asc').limit(12);
+                  console.log("query" + query);
+                  query.onSnapshot(function (snapshot) {
+                    snapshot.docChanges().forEach(function (change) {
+                      if (change.type === 'removed') {
+
+                      } else {
+                        var text = change.doc.data().text;
+                        var time = change.doc.data().time;
+
+                        var who;
+                        if (change.doc.data().who == displayNamechat) {
+                          who = "me";
+                        }
+                        if (who == "me") {
+
+                          $('#showmessages').append(
+                            '<li style="width:100%;">' +
+                            '<div class="msj-rta macro">' +
+                            '<div class="text text-r">' +
+                            '<p>' + text + '</p>' +
+                            '<p style="font-size:15px"><small id="date">' + time + '</small></p>' +
+                            '</div>' +
+                            '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="' + me.avatar + '" /></div>' +
+                            '</li>').scrollTop('#showmessages').prop('scrollHeight')
+
+                        } else {
+
+                          you.avatar = change.doc.data().pic;
+                          $('#showmessages').append(
+                            '<li style="width:100%">' +
+                            '<div class="msj macro">' +
+                            '<div class="avatar"><img class="img-circle" style="width:100%;" src="' + you.avatar + '" /></div>' +
+                            '<div class="text text-l">' +
+                            '<p>' + text + '</p>' +
+                            '<p style="font-size:15px"><small >' + time + '</small></p>' +
+                            '</div>' +
+                            '</div>' +
+                            '</li>').scrollTop('#showmessages').prop('scrollHeight')
+
+                        }
+
+
+                      }
+
+                    });
+                  });
+
+                }
+
+                $(".mytext").on("keydown", function (e) {
+                  if (e.which == 13) {
+                    var text = $(this).val();
+                    if (text !== "") {
+                      var FixID = localStorage.getItem("FixID");
+                      var namestorechat = localStorage.getItem("namestore");
+
+                      var date = new Date();
+                      var time = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + "::" + date.toLocaleTimeString();
+                      firebase.firestore().collection('messages').doc(FixID).collection('msg').add({
+                        text: text,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        time: time,
+                        who: namestorechat
+
+
+                      }).catch(function (error) {
+                        console.error('Error writing new message to Firebase Database', error);
+                      });
+                      $(this).val('');
+                    }
+                  }
+                });
+
+                $('body > div > div > div:nth-child(2) > span').click(function () {
+                  $(".mytext").trigger({ type: 'keydown', which: 13, keyCode: 13 });
+                })
+
+                //-- Clear Chat
+                // resetChat();
+
+
+
+
+
+                loadMessage();
+              </script>
+            </ons-page>
+          </template>
 
         </ons-page>
 
@@ -689,13 +722,38 @@
 
           </script>
           <div id="showdonefixlist"> </div>
-      
+
 
           <script>
             function showListDoneFix() {
               var namestore_requert = localStorage.getItem("namestore");
 
-        cc
+              firestore.collection("requestFix").where("namestore", "==", namestore_requert)
+                .onSnapshot(function (snapshot) {
+                  snapshot.docChanges().forEach(function (change) {
+
+                    if (change.doc.data().accept == 1 && change.doc.data().request == 0 && change.doc.data().done == 2) {
+                      console.log("Modified modified requestFix: ", change.doc.data());
+
+                      $('#showdonefixlist').append(
+
+                        '<ons-card>' +
+                        ' <div id="titlenotify" style="font-size: 17px">กำลังทำการซ่อมของ !!! ' + change.doc.data().customer +
+                        '</div>' +
+                        ' <div id="textnotify" style="font-size: 12px">รายการการซ่อมของ ( ' + change.doc.data().customer + ') ได้ดำเนินการเสร็จแล้ว   !!!' +
+                        '</div>' +
+
+
+                        ' </ons-card>'
+
+                      )
+
+                    }
+
+                  });
+                })
+
+
             }
             showListDoneFix();
           </script>
@@ -710,11 +768,28 @@
   <template id="tab3.html">
     <ons-page id="Tab3">
       <ons-card>
-        <center> <img src="img/user.png" alt="Onsen UI" style="width: 35%">
-          <div class="title" style="font-size: 25px">
-            นายขยัน &nbsp; มาทำงาน
+        <center>
+
+          <div id="profile-pic">
+
+
+          </div>
+
+          <div id="displayname" style="font-size: 25px">
+
           </div>
         </center>
+        <script>
+
+
+
+          document.getElementById("displayname").innerHTML = localStorage.getItem("namestore");
+
+          var img = document.createElement('img');
+          img.src = "img/man.png";
+          img.style = "width: 35%";
+          document.getElementById('profile-pic').appendChild(img);
+        </script>
       </ons-card>
       <!-- //crad profile -->
 
@@ -723,14 +798,203 @@
         <div class="content">
           <ons-list>
             <ons-list-header>Setttings</ons-list-header>
-            <ons-list-item>Help & Support</ons-list-item>
-            <ons-list-item>Contact Us</ons-list-item>
-            <ons-list-item>Terms & Conditions</ons-list-item>
+            <ons-list-item id="push-page">Help & Support<i class="large material-icons">chevron_right</i>
+            </ons-list-item>
+            <ons-list-item id="push-page2">Contact Us<i class="large material-icons">chevron_right</i>
+            </ons-list-item>
+            <ons-list-item id="push-page3">Terms & Conditions<i class="large material-icons">chevron_right</i>
+            </ons-list-item>
           </ons-list>
+
+        </div>
+      </ons-card>
+      <!-- //card setting -->
+
+    </ons-page>
+  </template>
+  <!--Help-->
+  <template id="help.html">
+    <ons-page id="help">
+      <ons-toolbar style="background-color: #FFE200">
+        <div class="left">
+          <ons-back-button>Back</ons-back-button>
+        </div>
+        <div class="center"></div>
+      </ons-toolbar>
+      <ons-card>
+        <center style="font-size: 14pt">Help & Support</center>
+        <div style="margin-top: 20px">
+          <ons-list-header>บริการ</ons-list-header>
+          <ons-list-item expandable style="font-size: 10pt">
+            FIX IT APP คืออะไร
+            <div class="expandable-content">
+              <p>
+                FIX IT คือแอพที่ใช้เพื่อเรียกขอรับบริการซ่อมรถนอกสถานที่จากช่างซ่อม
+                เพื่อความสะดวกสบายแก่ผู้ขับขี่รถจักรยานยนต์
+              </p>
+            </div>
+          </ons-list-item>
+
+          <ons-list-item expandable style="font-size: 10pt">
+            เหรียญ คืออะไร
+            <div class="expandable-content">
+              <p>
+                เหรียญ คือสิ่งที่ใช้นำมาแลกเพื่อเป็นส่วนลดตอนจ่ายเงินเมื่อช่างทำการซ่อมเสร็จสิ้น
+              </p>
+            </div>
+        </div>
+        </ons-list-item>
+
+      </ons-card>
+    </ons-page>
+  </template>
+
+  <!--ContactUs-->
+  <template id="contactUs.html">
+    <ons-page id="contactUs">
+      <ons-toolbar style="background-color: #FFE200">
+        <div class="left">
+          <ons-back-button>Back</ons-back-button>
+        </div>
+        <div class="center"></div>
+      </ons-toolbar>
+      <ons-card>
+        <center style="font-size: 14pt">Contact Us</center>
+        <div style="margin: 20px 20px 20px 20px">
+          <center><img src="img/PSU.png" alt="PSU Logo" width="20%" style="margin-bottom: 20px"></center>
+
+          <center>
+            <div class="expandable-content" style="font-size: 10pt">
+              <p>แอพพลิเคชันนี้ถูกสร้างขึ้นเป็นส่วนหนึ่งของรายวิชา PROJECT IN SE รหัส 977-491 ภาคเรียนที่ 1/2562</p>
+              <ons-list-item>
+                <div class="left">
+                  <img class="list-item__thumbnail" src="https://qrgo.page.link/3DJo3">
+                </div>
+                <div class="center">
+                  <span class="list-item__title">นางสาวณัฐวราภรณ์ ทับเที่ยง</span><span
+                    class="list-item__subtitle">ผู้จัดทำโปรเจค</span>
+                </div>
+              </ons-list-item>
+              <ons-list-item>
+                <div class="left">
+                  <img class="list-item__thumbnail" src="https://qrgo.page.link/1aVuy">
+                </div>
+                <div class="center">
+                  <span class="list-item__title">นายพีระนันท์ เรียนมาแทน</span><span
+                    class="list-item__subtitle">ผู้จัดทำโปรเจค</span>
+                </div>
+              </ons-list-item>
+              <ons-list-item>
+                <div class="left">
+                  <img class="list-item__thumbnail" src="https://qrgo.page.link/r5fUv">
+                </div>
+                <div class="center">
+                  <span class="list-item__title">ผศ.ดร.อซีส นันทอมรพงศ์</span><span
+                    class="list-item__subtitle">อาจารย์ที่ปรึกษาโปรเจค</span>
+                </div>
+              </ons-list-item>
+            </div>
+          </center>
+
+          <div style="font-size: 14pt ;margin-right: 15px; margin-bottom: 15px; margin-top: 15px"><a
+              href="tel:0980103837">
+              <img src="img/telephone.png" style="width: 30px;"></a>&nbsp;ติดต่อเรา</div>
+
+          <div style="font-size: 14pt;margin-right: 15px; margin-bottom: 15px"><a
+              href="mailto:s5930213012@phuket.psu.ac.th">
+              <img src="img/email.png" style="width: 30px;"></a>&nbsp;Email
+          </div>
+
+        </div>
+
+      </ons-card>
+    </ons-page>
+  </template>
+
+  <!--Terms Conditions-->
+  <template id="terms.html">
+    <ons-page id="terms">
+      <ons-toolbar style="background-color: #FFE200">
+        <div class="left">
+          <ons-back-button>Back</ons-back-button>
+        </div>
+        <div class="center"></div>
+      </ons-toolbar>
+      <ons-card>
+        <div>
+          <center style="font-size: 14pt">Terms Conditions</center>
+        </div>
+        <div style="margin: 20px 20px 20px 20px">
+          <p style="font-size: 10pt"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            นโยบายความเป็นส่วนตัว
+            นโยบายการจัดเก็บข้อมูลส่วนบุคคลของ FIX IT</p>
+
+          <p style="font-size: 10pt"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; คุณจำเป็นต้องเชื่อมต่อ FIX IT ไปยังบัญชี
+            Facebook Google ของคุณ เพื่อลงทะเบียน
+            และในกระบวนการดำเนินการเราจำเป็นต้องเก็บรวบรวมข้อมูลส่วนบุคคลต่อไปนี้จาก Facebook Google
+            เพื่อเปิดใช้งานบัญชีของคุณ
+            - Google: ภาพ และชื่อนามสกุลผู้ใช้
+            - Facebook: ภาพ และชื่อนามสกุลผู้ใช้</p>
+
+          <p style="font-size: 10pt"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ในระหว่างที่ใช้ FIX IT
+            คุณสามารถลงทะเบียนอีเมล์หรือชื่อเล่นในโปรไฟล์ได้
+            คุณสามารถเลือกที่จะลงทะเบียนอีเมล์หรือชื่อเล่นซึ่งคุณสามารถแก้ไขข้อมูลได้ในภายหลังเมื่อคุณต้องการ
+            นอกจากนี้เรายังเก็บที่อยู่อีเมลของผู้ที่จะสมัครชาลเลนจ์ลีก
+            และขอสงวนสิทธิ์ในการเก็บรวบรวมข้อมูลการติดต่อรวมทั้งข้อมูลการจัดส่งรายการเมื่อคุณติดต่อเราหรือเมื่อคุณส่งรายการในช่วงกิจกรรมพิเศษ
+            เมื่อคุณใช้บริการของเรา ข้อมูลเกี่ยวกับเครือข่ายของคุณ ( ที่อยู่ IP ,การเก็บข้อมูลที่อยู่ของ IP,
+            ประเภทของเครือข่าย , ฯลฯ) , บันทึกการใช้บริการ (ความถี่ในการใช้ , การใช้เหรียญ , ฯลฯ ) ,
+            ข้อมูลของอุปกรณ์ (รุ่น , ระบบปฏิบัติการ , ฯลฯ) อาจถูกเก็บรวบรวม
+            วิธีการเก็บข้อมูลส่วนบุคคล</p>
+
         </div>
       </ons-card>
     </ons-page>
   </template>
+
+
+  </ons-page>
+
+
+  </template>
+
+  <script>
+    document.addEventListener('init', function (event) {
+      var page = event.target;
+
+      if (page.id === 'setting') {
+        page.querySelector('#push-page').onclick = function () {
+          document.querySelector('#myNavigator1').pushPage('help.html', { data: { title: 'FIX IT' } });
+        };
+      } else if (page.id === 'help') {
+        7
+        page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+      }
+    });
+
+    document.addEventListener('init', function (event) {
+      var page = event.target;
+      if (page.id === 'setting') {
+        page.querySelector('#push-page2').onclick = function () {
+          document.querySelector('#myNavigator1').pushPage('contactUs.html', { data: { title: 'FIX IT' } });
+        };
+      } else if (page.id === 'contactUs') {
+        page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+      }
+    });
+
+    document.addEventListener('init', function (event) {
+      var page = event.target;
+      if (page.id === 'setting') {
+        page.querySelector('#push-page3').onclick = function () {
+          document.querySelector('#myNavigator1').pushPage('terms.html', { data: { title: 'FIX IT' } });
+        };
+      } else if (page.id === 'terms') {
+        page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+      }
+    });
+
+  </script>
+
   <!--  ======================================================tab3===================================================== -->
 
   <script>
@@ -778,18 +1042,20 @@
   <script>
     // app logout 
     function logout() {
+      window.localStorage.clear();
       firebase.auth().signOut().then(function () {
         // Sign-out successful.
         ons.notification.alert('See u again soon');
         window.location.href = 'sign-in.html';
+      
       }).catch(function (error) {
         // An error happened.
       });
-      localstorage.clear()
+
     }
 
     function chat() {
-      document.querySelector('#myNavigator').pushPage('chat.html');
+      document.querySelector('#myNavigator1').pushPage('chat.html');
 
     }
 
