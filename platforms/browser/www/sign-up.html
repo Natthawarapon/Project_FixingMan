@@ -37,7 +37,7 @@
     <ons-page>
         <div class="limiter">
 
-            <div class="container-login100" >
+            <div class="container-login100">
 
                 <div class="wrap-login100 p-t-190 p-b-30">
 
@@ -110,15 +110,15 @@
                         <div class="row">
 
                             <div class="col left">
-                                <div >
-                                    <input class="inputposition" type="text" placeholder="longitude" id="long" >
-                                
+                                <div>
+                                    <input class="inputposition" type="text" placeholder="longitude" id="long">
+
                                 </div>
                             </div>
                             <div class="col center">
-                                <div >
-                                    <input class="inputposition" type="text" placeholder="latitude" id="lat"  >
-                                    
+                                <div>
+                                    <input class="inputposition" type="text" placeholder="latitude" id="lat">
+
                                 </div>
 
                             </div>
@@ -139,11 +139,22 @@
                             Sign up
                         </button>
                     </div>
+                    <div style="border: px solid; width: 200px; min-height: 100px;">
+                        
+                        <button onclick="getPhotoFromCamera();">Launch Camera</button>
+                        <button onclick="getPhotoFromAlbum();">Goto Picture Gallery</button>
+                        <div>
+                            <img id="image" style="display:none; width:290px;height:210px;" src="" />
+                        </div>
 
+                    </div>
+                    <div class="container-login100-form-btn p-t-10">
+                        <button class="login100-form-btn"  onclick="saveStoreImage()">
+                           SaveImg
+                        </button>
+                    </div>
                 </div>
-
             </div>
-        </div>
         </div>
     </ons-page>
 
@@ -163,14 +174,66 @@
 
         firebase.initializeApp(firebaseConfig);
         var firestore = firebase.firestore();
+      
+       
 
-        
+        var Picture;
+        var StoreImage = localStorage.getItem('namestore');
+        var storageRef = firebase.storage().ref();
+        var ref = storageRef.child('StoreImages/' + StoreImage + '.jpg');
 
+
+        function getPhotoFromCamera() {
+            navigator.camera.getPicture(onPhotoDataSuccess, onFail, {
+                quality: 50,
+                sourceType: navigator.camera.PictureSourceType.CAMERA,
+                destinationType: navigator.camera.DestinationType.DATA_URL,
+            });
+        }
+        function onPhotoDataSuccess(imageData) {
+            var image = document.getElementById('image');
+            image.style.display = 'block';
+            image.src = "data:image/jpeg;base64," + imageData;
+            Picture = imageData;
+            
+        }
+
+        function getPhotoFromAlbum() {
+            navigator.camera.getPicture(onPhotoURISuccess, onFail, {
+                quality: 50,
+                sourceType: navigator.camera.PictureSourceType.SAVEDPHOTOALBUM,
+                destinationType: navigator.camera.DestinationType.FILE_URI
+            });
+        }
+        function onPhotoURISuccess(imageURI) {
+            var image = document.getElementById('image');
+            image.style.display = 'block';
+            image.src = imageURI;
+            Picture = imageURI;
+
+
+        }
+        function onFail(message) {
+            alert('Failed because:' + message);
+        }
+
+        function saveStoreImage() {
+            var message = Picture;
+            var url;
+            ref.putString(message, 'base64').then(function (snapshot) {
+                console.log('Uploaded a base64 string!');
+                snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                    console.log("File available at", downloadURL);
+                    url = downloadURL;
+                    console.log("url" + url);
+
+                })
+            })
+        }
 
         const saveButton = document.querySelector("#submit");
-
         saveButton.addEventListener("click", function () {
-            
+
             const username_text = username.value;
             const namestore_text = namestore.value;
             const email_text = email.value;
@@ -201,11 +264,10 @@
                             email: email_text,
                             identity: identity_text,
                             nphone: nphone_text,
-                           
-                            longitude : longitude_text,
-                            latitude : latitude_text,
-                            status : ""
-                      
+
+                            longitude: longitude_text,
+                            latitude: latitude_text,
+                            status: ""
 
                         }).then(function () {
                             console.log("Status saved!");
@@ -226,7 +288,7 @@
 
 
     </script>
- 
+    <script type="text/javascript" src="cordova.js"></script>
 
     <!--===============================================================================================-->
     <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
